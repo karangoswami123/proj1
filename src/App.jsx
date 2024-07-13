@@ -548,8 +548,138 @@
 
 // export default App;
 
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+
+// const API_KEY = '6053382326b9dcb80ee5b8c0672e205f'; // Replace with your OpenWeather API key
+// const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+
+// const App = () => {
+//   const [city, setCity] = useState('');
+//   const [weather, setWeather] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     if (city.length > 0) {
+//       getWeather();
+//     }
+//   }, [city]);
+
+//   const getWeather = async () => {
+//     try {
+//       const response = await axios.get(`${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric`);
+//       setWeather(response.data);
+//       setError(null);
+//     } catch (err) {
+//       if (err.response && err.response.data && err.response.data.message) {
+//         setError(err.response.data.message);
+//       } else {
+//         setError('City not found');
+//       }
+//       setWeather(null);
+//     }
+//   };
+
+//   const formatTime = (timestamp) => {
+//     const date = new Date(timestamp * 1000);
+//     return date.toLocaleTimeString();
+//   };
+
+//   const getBackgroundImage = () => {
+//     if (weather && weather.main.temp > 30) {
+//       return 'https://images.unsplash.com/photo-1624412175968-c0cd30bea6ea?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+//     } else {
+//       return 'https://static.vecteezy.com/system/resources/previews/001/856/959/original/futuristic-city-landscape-with-sunset-future-theme-concept-background-vector.jpg';
+//     }
+//   };
+
+//   const appStyles = {
+//     minHeight: '100vh',
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     background: `url(${getBackgroundImage()})`,
+//     backgroundSize: 'cover',
+//     margin: 0,
+//     fontFamily: 'Arial, sans-serif'
+//   };
+//   const cardStyles = {
+//     backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white card background
+//     padding: '20px',
+//     borderRadius: '10px',
+//     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+//     maxWidth: '400px',
+//     width: '100%',
+//     textAlign: 'center',
+//   };
+
+//   const inputStyles = {
+//     padding: '10px',
+//     borderRadius: '10px',
+//     border: '1px solid #ccc',
+//     fontSize: '16px',
+//     width: '100%',
+//     marginBottom: '20px',
+//   };
+
+//   const buttonStyles = {
+//     padding: '10px 20px',
+//     border: 'none',
+//     borderRadius: '10px',
+//     fontSize: '16px',
+//     cursor: 'pointer',
+//     transition: 'background-color 0.3s',
+//     backgroundColor: '#007BFF',
+//     color: 'white',
+//   };
+
+//   const buttonHoverStyles = {
+//     backgroundColor: '#0056b3',
+//   };
+
+//   return (
+//     <div style={appStyles}>
+//       <div style={cardStyles}>
+//         <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>Weather App</h1>
+//         <input
+//           type="text"
+//           value={city}
+//           onChange={(e) => setCity(e.target.value)}
+//           placeholder="Enter city name"
+//           style={inputStyles}
+//         />
+//         <button
+//           onClick={getWeather}
+//           style={buttonStyles}
+//           onMouseOver={(e) => e.target.style.backgroundColor = buttonHoverStyles.backgroundColor}
+//           onMouseOut={(e) => e.target.style.backgroundColor = buttonStyles.backgroundColor}
+//         >
+//           Get Weather
+//         </button>
+        
+//         {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
+//         {weather && (
+//           <div style={{ backgroundColor: '#f7fafc', opacity: 0.75, padding: '20px', borderRadius: '10px', boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)', textAlign: 'center', width: '100%', marginTop: '20px' }}>
+//             <h2 style={{ fontSize: '20px', fontWeight: '600' }}>{weather.name}</h2>
+//             <p style={{ fontSize: '18px' }}>{weather.weather[0].description}</p>
+//             <p style={{ fontSize: '18px' }}>Temperature: {weather.main.temp}°C</p>
+//             <p style={{ fontSize: '18px' }}>Humidity: {weather.main.humidity}%</p>
+//             <p style={{ fontSize: '18px' }}>Pressure: {weather.main.pressure} hPa</p>
+//             <p style={{ fontSize: '18px' }}>Wind Speed: {weather.wind.speed} m/s</p>
+//             <p style={{ fontSize: '18px' }}>Coordinates: {weather.coord.lon}, {weather.coord.lat}</p>
+//             <p style={{ fontSize: '18px' }}>Sunrise: {formatTime(weather.sys.sunrise)}</p>
+//             <p style={{ fontSize: '18px' }}>Sunset: {formatTime(weather.sys.sunset)}</p>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default App;
+
+
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const API_KEY = '6053382326b9dcb80ee5b8c0672e205f'; // Replace with your OpenWeather API key
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
@@ -567,15 +697,15 @@ const App = () => {
 
   const getWeather = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric`);
-      setWeather(response.data);
+      const response = await fetch(`${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric`);
+      if (!response.ok) {
+        throw new Error('City not found');
+      }
+      const data = await response.json();
+      setWeather(data);
       setError(null);
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('City not found');
-      }
+      setError(err.message || 'City not found');
       setWeather(null);
     }
   };
